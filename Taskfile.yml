@@ -36,3 +36,8 @@ tasks:
     desc: Run the unit tests inside a Python 3.7 docker container
     cmds:
       - docker run --rm -v "{{.ROOT_DIR}}:/app" -w /app {{.PY37_IMAGE}} sh -c "pip install --quiet . pytest && python -m pytest -q"
+
+  build:
+    desc: Build the source distribution and wheel
+    cmds:
+      - uv build --directory "{{.ROOT_DIR}}"

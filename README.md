@@ -47,6 +47,26 @@ msg.set_user_property("trace-id", "abc123")
 | `message_expiry_interval` | `int \| None` | Seconds after which the broker may discard the message. |
 | `user_properties` | `dict[str, str]` | Arbitrary user-defined key/value metadata. |
 
+`Message` also converts to and from the shapes MQTT client libraries use.  No client library
+is a dependency of this package: the inbound conversions are duck-typed, and `paho_kwargs()`
+imports paho-mqtt only when it is called.
+
+```python
+# Publishing with paho-mqtt (requires paho-mqtt to be installed by the caller).
+client.publish(**msg.paho_kwargs())
+
+# Receiving, in a paho-mqtt on_message callback.
+msg = Message.from_paho_message(paho_msg)
+```
+
+| Method | Description |
+| --- | --- |
+| `mqtt_properties()` | The message's MQTT v5 PUBLISH properties as a dict keyed by their spec names (`ContentType`, `UserProperty`, ...).  Unset properties are omitted. |
+| `set_mqtt_properties(properties)` | Applies such a dict onto the message.  Unknown keys are ignored, so a client library's property object can be passed through as-is. |
+| `Message.from_mqtt_message(msg)` | Builds a `Message` from any received-message object with `topic`, `payload`, `qos` and `retain` attributes, plus an optional `properties` mapping or attribute carrier. |
+| `paho_kwargs()` | The keyword arguments for a paho-mqtt `Client.publish()` call, including a populated `Properties` object. |
+| `Message.from_paho_message(paho_msg)` | `from_mqtt_message()` under the name paho callers expect. |
+
 ### `ContentType`
 
 A `str` subclass for parsing and constructing HTTP-style `Content-Type` header values,
