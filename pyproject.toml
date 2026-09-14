@@ -1,0 +1,77 @@
+[project]
+name = "py-stinger-conn-iface"
+version = "0.1.0"
+description = "Interface definitions for Python stinger-ipc connections"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.7"
+authors = [
+    { name = "Jacob Brunson", email = "github@jacobbrunson.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/stinger-ipc/py-stinger-conn-iface"
+Issues = "https://github.com/stinger-ipc/py-stinger-conn-iface/issues"
+
+[dependency-groups]
+# The dev toolchain itself requires a modern Python (see .python-version); it is only ever
+# run against that interpreter, even though the published package supports back to 3.7.
+dev = [
+    "black>=25.1.0; python_version >= '3.9'",
+    # Pinned exactly: this is the newest mypy release that can still simulate a
+    # python_version target as old as 3.8 (the closest it supports to this project's 3.7
+    # floor) — every release since has raised that minimum.
+    "mypy==1.14.0; python_version >= '3.9'",
+    "pytest>=8.3.0; python_version >= '3.9'",
+    "ruff>=0.9.0; python_version >= '3.9'",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pystingerconniface"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py37"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.black]
+line-length = 100
+target-version = ["py37"]
+
+[tool.mypy]
+# 3.8 is the oldest target mypy can actually simulate; the package itself supports 3.7+
+# (see requires-python) but that floor isn't independently verified by mypy.
+python_version = "3.8"
+strict = true
+packages = ["pystingerconniface"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+# pytest's own source uses syntax newer than our python_version target; skip parsing it
+# rather than type-checking its internals.
+module = ["pytest", "_pytest.*"]
+follow_imports = "skip"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

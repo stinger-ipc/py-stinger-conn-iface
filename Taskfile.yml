@@ -1,0 +1,38 @@
+version: "3"
+
+vars:
+  PY37_IMAGE: python:3.7-slim
+
+tasks:
+  default:
+    desc: Run formatting, lint, type, and test checks
+    cmds:
+      - task: black
+      - task: ruff
+      - task: mypy
+      - task: test
+
+  black:
+    desc: Check code formatting with black
+    cmds:
+      - uv run black --check .
+
+  ruff:
+    desc: Lint with ruff
+    cmds:
+      - uv run ruff check .
+
+  mypy:
+    desc: Type-check with mypy
+    cmds:
+      - uv run mypy src tests
+
+  test:
+    desc: Run the unit tests
+    cmds:
+      - uv run pytest
+
+  test:py37:
+    desc: Run the unit tests inside a Python 3.7 docker container
+    cmds:
+      - docker run --rm -v "{{.ROOT_DIR}}:/app" -w /app {{.PY37_IMAGE}} sh -c "pip install --quiet . pytest && python -m pytest -q"
