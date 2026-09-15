@@ -1,6 +1,6 @@
 [project]
 name = "py-stinger-conn-iface"
-version = "0.1.1"
+version = "0.1.2"
 description = "Interface definitions for Python stinger-ipc connections"
 readme = "README.md"
 license = "MIT"
@@ -53,7 +53,13 @@ line-length = 100
 target-version = "py37"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B"]
+select = ["E", "F", "I", "UP", "B", "FA"]
+
+[tool.ruff.lint.pyupgrade]
+# Keep Optional[X]/Union[X, Y] instead of X | None/X | Y even under `from __future__ import
+# annotations`: this package supports 3.7-3.9, where that syntax raises at runtime for any
+# caller that introspects annotations (e.g. typing.get_type_hints()).
+keep-runtime-typing = true
 
 [tool.black]
 line-length = 100

@@ -3,7 +3,7 @@ from __future__ import annotations
 import importlib
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Dict, List, Optional, Union
 
 from .contenttype import ContentType
 
@@ -16,12 +16,12 @@ class Message:
     payload: bytes
     qos: int
     retain: bool = False
-    content_type: str | ContentType | None = None
-    correlation_data: bytes | None = None
-    response_topic: str | None = None
-    subscription_ids: list[int] = field(default_factory=list)  # Ignored on publish
-    message_expiry_interval: int | None = None
-    user_properties: dict[str, str] = field(default_factory=dict)
+    content_type: Union[str, ContentType, None] = None
+    correlation_data: Optional[bytes] = None
+    response_topic: Optional[str] = None
+    subscription_ids: List[int] = field(default_factory=list)  # Ignored on publish
+    message_expiry_interval: Optional[int] = None
+    user_properties: Dict[str, str] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if self.user_properties is None:
@@ -32,13 +32,13 @@ class Message:
             self.user_properties = dict()
         self.user_properties[key] = value
 
-    def mqtt_properties(self) -> dict[str, Any]:
+    def mqtt_properties(self) -> Dict[str, Any]:
         """
         The MQTT v5 PUBLISH properties for this message, keyed by their spec names (the same
         names MQTT client libraries use as attributes on their property objects).  Properties
         that are unset on this message are omitted.
         """
-        properties: dict[str, Any] = {}
+        properties: Dict[str, Any] = {}
         if self.content_type is not None:
             properties["ContentType"] = (
                 self.content_type.to_header()
@@ -105,7 +105,7 @@ class Message:
             )
         return msg_obj
 
-    def paho_kwargs(self) -> dict[str, Any]:
+    def paho_kwargs(self) -> Dict[str, Any]:
         """
         The keyword arguments for a paho-mqtt `Client.publish()` call for this message.
 
