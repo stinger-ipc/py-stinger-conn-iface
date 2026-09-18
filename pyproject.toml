@@ -1,6 +1,6 @@
 [project]
 name = "py-stinger-conn-iface"
-version = "0.1.2"
+version = "0.1.3"
 description = "Interface definitions for Python stinger-ipc connections"
 readme = "README.md"
 license = "MIT"
