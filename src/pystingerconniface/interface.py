@@ -31,6 +31,13 @@ class IBrokerConnection(ABC):
         pass
 
     @abstractmethod
+    def unsubscribe(self, topic):
+        """
+        Unsubscribes to the provided topic and removes any callbacks.
+        """
+        pass
+
+    @abstractmethod
     def add_message_callback(self, callback: MessageCallback) -> None:
         """
         The provided callback is called for all received messages that do not have a specific
